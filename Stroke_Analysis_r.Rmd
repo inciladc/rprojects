@@ -1,0 +1,303 @@
+---
+title: "Stroke Analysis"
+output: html_notebook
+---
+
+Stroke: when a blockage or bleed of the blood vessels either interrupts or reduces the supply of blood to the brain. 
+ 
+Stroke is a leading cause of disability and death in the United States.
+ 
+ Objective: This analysis study aims to understand the nature of Stroke relative to the criteria included in the data. We hope to bring awareness to the reader, through this analysis, to reflect on one's current health and lifestyle status and how close or preventive one is for a stroke incidence. 
+ 
+Data Retrieval and Structure
+
+
+Path: https://www.kaggle.com/fedesoriano/stroke-prediction-dataset
+```{r}
+stroke <- read.csv("stroke.csv")
+str(stroke)
+```
+
+'data.frame':	5110 obs. of  12 variables:
+
+PARTICIPANTS: We have a total of 5110 Participants with 10 Criteria
+
+
+Criteria Definition
+
+1) id: unique identifier
+2) gender: "Male", "Female" or "Other"
+3) age: age of the patient
+4) hypertension: 0 if the patient doesn't have hypertension, 1 if the patient has hypertension
+5) heart_disease: 0 if the patient doesn't have any heart diseases, 1 if the patient has a heart disease
+6) ever_married: "No" or "Yes"
+7) work_type: "children", "Govt_jov", "Never_worked", "Private" or "Self-employed"
+8) Residence_type: "Rural" or "Urban"
+9) avg_glucose_level: average glucose level in blood
+10) bmi: body mass index
+11) smoking_status: "formerly smoked", "never smoked", "smokes" or "Unknown"*
+12) stroke: 1 if the patient had a stroke or 0 if not
+
+*Note: "Unknown" in smoking_status means that the information is unavailable for this patient
+
+
+
+PARTICIPANTS BY GENDER
+```{r}
+table(stroke$gender)
+```
+There are more female participants over men or 58.59% and 41.39% respectively
+
+
+
+Participant Demographic with Stroke
+```{r}
+withstroke <- stroke %>% filter(stroke==1)
+wostroke <-  stroke %>% filter(stroke==0)
+sum(stroke$stroke)
+table(stroke$gender,stat)
+```
+
+Of all Participants, 249 are diagnosed with stroke or 4.9% of total participants.
+
+Between gender, 141 for females and 108 on males have stroke or 4.9% and 5.4% respectively
+
+Conclusion: By Gender - we have seen more stroke in men over women at 5.4% and 4.9% respectively. However it isn't much of a difference to conclude that gender would be a huge factor in developing a stroke. 
+
+We will observe more on this analysis to which criteria, wether male or female, could potentially trigger a development of stroke.
+
+Participant by Age
+
+```{r}
+hist(stroke$age)
+```
+The distribution of our participants by Age is wide (0-80yo) which is quite a good criteria for the measure of common-ness of stroke incidence in age. Also, having sufficient freqeuncy (average of 200 participants) in each age range allow us to have a good sampling measure. 
+
+```{r}
+mean(stroke$age)
+```
+Overall we have an average of 43.22yo amongst participants
+
+
+Stroke Incidence by Age
+```{r}
+hist(withstroke$age)
+```
+In Conclusion, looking at the chart, Age plays a vital factor in the incidence of stroke. As age of the participants progresses so is the prevalence of stroke
+
+
+Average Stroke Incidence by Age
+```{r}
+mean(withstroke$age)
+```
+
+
+
+STROKE AND HYPERTENSION
+
+Hypertension
+also known as high or raised blood pressure, is a condition in which the blood vessels have persistently raised pressure. Hypertension could lead to stroke.
+```{r}
+stat <- ifelse(stroke$stroke==1,"stroke","no stroke")
+highblood <- ifelse(stroke$hypertension==1,"with hypertension","without hypertension")
+table(highblood, stat)
+```
+We have a total of 498 participants that are hypertensive or 9.8%.
+
+ And 66 of hypertensive participants developed stroke or 13.25% 
+
+On the other hand, we have 4612 participants without hypertension and 183 of them had a stroke or 3.97%
+
+In conclusion, with hypertension, you get 3 times as much chance of developing stroke. 
+
+
+
+STROKE AND HEART DISEASE
+```{r}
+stat <- ifelse(stroke$stroke==1,"stroke","no stroke")
+heart.disease <- ifelse(stroke$heart_disease==1,"with heart disease","without heart disease")
+table(heart.disease, stat)
+```
+We have a total of 276 participants that have heart disease or 5.4% of overall participants, 
+
+47 of those or 17% have developed stroke.
+
+While 4834 OF participants do not have heart disease yet 202 have developed stroke or 4.2%
+
+In conclusion, with heart disease, you get 4 times as much chance of developing stroke.
+
+
+WHAT IF: you have Hypertension and Heart disease at the same time?
+```{r}
+sum(stroke$hypertension==1 & stroke$heart_disease==1)
+```
+Of all applicants, 64 have both hypertension and heart disease
+```{r}
+sum(stroke$hypertension==1 & stroke$heart_disease==1 & stroke$stroke==1)
+```
+and 13 of those developed stroke or 20.31%
+
+Overall, the risk of stroke is 6 times as high if you have both hypertension and heart disease.
+
+Keep Track of your heart health to prevent stroke.
+
+
+GLUCOSE LEVEL OF PARTICIPANTS
+```{r}
+hist(stroke$avg_glucose_level)
+```
+```{r}
+mean(stroke$avg_glucose_level)
+```
+The participants are normally distributed within the lower range or with a mean of 106.15 of glucose level
+
+
+STROKE AND GLUCOSE LEVEL
+```{r}
+hist(withstroke$avg_glucose_level)
+```
+More participants with lower glucose level developed stroke although the opposite spectrum also tells us that one can develop stroke with high glucose levels
+
+In conclusion, keeping one's glucose level in normal range can prevent stroke from developing.
+
+
+BMI
+```{r}
+bmi_ <- ifelse(stroke$bmi=="N/A",0,stroke$bmi)
+bmi_ <- as.numeric(bmi_)
+hist(bmi_)
+```
+```{r}
+mean(bmi_)
+```
+The normal distribution of BMI from the participants are between 20-40 with a mean of 27.76.
+
+The normal BMI is 24.
+
+
+BMI AND STROKE
+```{r}
+bmi_withstroke <- ifelse(withstroke$bmi=="N/A",0,withstroke$bmi)
+bmi_withstroke <- as.numeric(bmi_s)
+hist(bmi_withstroke)
+```
+```{r}
+mean(bmi_s)
+```
+From the participants with stroke (249), the normal distribution of BMI is 25.57 concluding that even having close to a normal range of BMI, stroke can potentially develop.
+
+
+Now, let's Analyze the Lifestyle criteria and observe if these  triggered a development of stroke to our participants
+
+MARRIAGE
+```{r}
+stroke %>% ggplot(aes(ever_married)) + geom_bar(width=0.2) + ggtitle("Marriage status All Participants")
+```
+Most of the participants are married.
+
+
+MARRIAGE AND STROKE
+```{r}
+ever.married <- stroke$ever_married
+table(ever.married,stat)
+```
+For the non-married only 29 participants developed stroke and 220 for the married. 
+
+The probability, for the non-married the development of the condition is 1.7% and for the married at 6.6%.
+
+In summary for married individuals, one can get 4 times as much chance of developing stroke. Therefore, make your wife happy and everything will be alright. :)
+
+
+RESIDENCE: Can your place or residence have a factor in developing stroke?
+```{r}
+stroke %>% ggplot(aes(Residence_type)) + geom_bar(width=0.2) + ggtitle("Place of Residence All Participants")
+```
+Our participants have about the same number in place of residence, either rural or urban
+
+RESIDENCE AND STROKE
+```{r}
+reside <- stroke$Residence_type
+table(reside, stat)
+```
+
+Rural   4.53%
+Urban   5.20%
+
+In conclusion, based on our sample, there is not much extreme difference in place of residence that would trigger a development of stroke. Whatever or wherever place you may be living, the potential exists almost as much.
+
+
+WORK
+Most of the people have jobs. It is needed for survival. Can the same reason to survive lead us to develop a severe condition such as stroke? if so, which work type could it be? let's find out. 
+```{r}
+stroke %>% ggplot(aes(work_type)) + geom_bar(width=0.2) + ggtitle("Work Type All Participants")
+```
+Majority of the participants are in the Private Sector. 
+
+
+WORK TYPE AND STROKE
+```{r}
+work <- stroke$work_type
+table( work, stat)
+```
+Statistically, the probability of developing a stroke by work:
+
+Children        0.29%
+Gov_job         5.02%
+Never_worked    0%
+Private         5.09%
+Self-employed   7.94%
+
+Based on participants data, those that never worked had 0 probability of developing stroke, whereas children had small a one. Both Government and Private work sectors have the same probability and the Self-employed have the highest probability.
+
+What work type have you? 
+
+SMOKING
+```{r}
+stroke %>% ggplot(aes(smoking_status)) + geom_bar(width=0.2) + ggtitle("Smoking All Participants")
+```
+Most of the total participants never smoked. Although there is a a lot of "unknown" data, the three statuses should be enough to  determine individual probabilities.
+```{r}
+smoke <- stroke$smoking_status
+table( smoke, stat)
+```
+Statistically, the probability of developing a stroke by Smoking:
+
+formerly        7.91%
+never smoked    4.76%
+smokes          5.32%
+Unknown         3.04%%
+
+Smoking, even if you have stopped already, increases the risk of stroke as the data tells us. 
+
+
+
+Overall Takeaway: 
+
+NOw that you have an overview analysis of the stroke indicators through this data, you can answer for yourself how close or preventive you are to developing stroke. We all want to prevent this event from developing as we progress through age, ang age is a huge factor in developing stroke as data suggests. If we remain in our current health and lifestyle conditions knowing it increases the risk, then at one point in time it may happen.  
+
+To keep the probability low, including other criteria in this analysis, one should make sure to minimize what could potentially increase the risk as one or more of these criteria combined (example hypertension + heart disease) the risk increases even higher.
+
+One thing that we cannot control is Age. Everybody ages, but the rest of criteria in this data, we can. A better heart health, Not Smoking, Manage Stress, normalize BMI and the works will surely lower the risk of stroke in our lives.
+
+
+May this analysis give you a data-driven decision to decide the health and lifestyle choices to consider towards the goal of stroke prevention. 
+
+Thank you.
+
+
+
+#computing probabilities
+```{r}
+percent <- function(){
+  a <- readline(prompt = "a: ")
+  b <- readline(prompt = "b: ")
+  a <- as.numeric(a)
+  b <- as.numeric(b)
+  c = (a/(a+b))*100
+  print(c)
+}
+```
+
+
+
+
